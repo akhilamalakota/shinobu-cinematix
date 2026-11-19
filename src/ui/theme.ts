@@ -1,13 +1,13 @@
 import type { SourceId } from "../sources/types";
 
 export const COLOR = {
-  accent: "#a78bfa",
-  text: "#e9e4f5",
-  alt: "#b9a7e6",
-  good: "#86d6a2",
-  warn: "#f0c560",
-  bad: "#ee7d92",
-  bright: "#d8b4fe",
+  accent: "#DC143C",
+  text: "#F2F2F2",
+  alt: "#A6A0A2",
+  good: "#86D6A2",
+  warn: "#F0C560",
+  bad: "#FF526B",
+  bright: "#FF334F",
 } as const;
 
 export const ICON = {
@@ -24,24 +24,21 @@ export const ICON = {
   pause: "⏸",
 } as const;
 
-export const RULE = "#6b6577";
+export const RULE = "#54202B";
 
 export const GUTTER = 2;
 
 export const SOURCE_STYLE: Record<SourceId, { tag: string; color: string }> = {
-  fitgirl: { tag: "FG", color: COLOR.accent },
+  fitgirl: { tag: "FG", color: "#a78bfa" },
   yts: { tag: "YTS", color: COLOR.good },
   eztv: { tag: "EZTV", color: COLOR.warn },
-  nyaa: { tag: "NYAA", color: COLOR.bright },
+  nyaa: { tag: "NYAA", color: "#d8b4fe" },
   subsplease: { tag: "SUB", color: "#b9a7e6" },
   "tpb-movies": { tag: "TPB", color: "#5fd0c5" },
   "tpb-tv": { tag: "TPB", color: "#5fd0c5" },
   bittorrented: { tag: "BT", color: "#7db8f0" },
 };
 
-// Tolerant lookup: a source id may be absent (a pasted magnet / bare infohash) or
-// no longer exist (a removed source persisted in old history/seeds). Fall back to a
-// neutral tag rather than indexing SOURCE_STYLE and crashing on `undefined`.
 export function sourceStyle(id?: SourceId): { tag: string; color: string } {
   const s = id ? (SOURCE_STYLE as Record<string, { tag: string; color: string }>)[id] : undefined;
   return s ?? { tag: "•", color: COLOR.alt };
