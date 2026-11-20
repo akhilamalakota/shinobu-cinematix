@@ -1,118 +1,274 @@
+# THE SHINOBU UNIVERSE
+
 <p align="center">
-  <img src="https://git.bairon.dev/baairon/torlink/raw/branch/main/preview/splash.svg" alt="torlink, curated torrents straight from your terminal" style="max-width: 832px; width: 100%; height: auto;">
+  <img src="preview/splash.svg" alt="SHINOBU CINEMATIX" width="832">
 </p>
 
-Finding a torrent these days sucks. One site is a minefield of fake download buttons. Another hides the real link under a popup that spawns two more tabs. And after all that, half the results are dead, zero seeders.
+<p align="center">
+  <strong>A SHINOBU UNIVERSE ORIGINAL</strong>
+</p>
 
-torlink is a torrent finder that lives in your terminal, with zero setup and nothing to configure. One search checks a short, curated list of reputable sources at once, and whatever you pick downloads straight to your computer. The files are yours, saved to your downloads folder.
+<h1 align="center">SHINOBU CINEMATIX</h1>
 
-## Get started
+<p align="center">
+  A cinematic, terminal-native torrent discovery and downloader.
+  <br>
+  Discover. Download. Seed. All from your terminal.
+</p>
 
-1. **Install Node** (from [nodejs.org](https://nodejs.org)), it's all torlink needs.
-2. **Open your terminal.**
-3. **Start it:**
+<p align="center">
+  <strong>CONCEIVED · CREATED · ENGINEERED BY</strong>
+  <br>
+  <strong><h2>AKHIL AMALAKOTA</h2></strong>
+  <strong>FOUNDER OF SHINOBU</strong>
+</p>
 
-   ```sh
-   npx torlnk
-   ```
+---
 
-That's the only thing you'll type. torlink opens straight to a search bar: search for what you want, paste in a magnet link or a bare infohash, drag a `.torrent` file from your file manager onto the window, or just press Enter on an empty box to browse the curated library. From there it's all keypresses, nothing to memorize, and `?` brings up the full list anytime.
+## 影 THE SHINOBU UNIVERSE
+
+An independent universe of products, ideas, and technology.
+
+SHINOBU CINEMATIX is an original product from the SHINOBU universe — built to bring a cinematic torrent discovery and downloading experience directly to your terminal.
+
+**One universe. Multiple creations. One identity.**
+
+## About CINEMATIX
+
+SHINOBU CINEMATIX brings torrent discovery and downloading directly into your terminal.
+
+Search across multiple sources, browse results, download files, manage active transfers, and seed completed downloads — all through an interactive terminal interface.
+
+No browser full of popups. No unnecessary setup. Just your terminal.
+
+## Features
+
+- **Multi-source discovery:** Search multiple torrent sources simultaneously.
+- **Interactive terminal UI:** Browse results, manage downloads, and navigate with keyboard shortcuts.
+- **Batch downloads:** Select multiple results and download them together.
+- **Magnet support:** Paste magnet links or infohashes directly.
+- **Torrent file support:** Open `.torrent` files.
+- **Download management:** Track progress, speed, peers, and estimated time remaining.
+- **Movie-folder organization:** Keep each new download organized in its own folder.
+- **Automatic seeding:** Share completed downloads with other peers.
+- **Seeding controls:** Pause, resume, and manage uploads.
+- **Playlist generation:** Generate M3U playlists for suitable multi-file downloads.
+- **Headless operation:** Run supported operations without the interactive interface.
+- **Network controls:** Bind torrent traffic to a selected network interface.
+- **Persistent history:** Keep track of completed downloads between sessions.
+
+## Installation
+
+### Requirements
+
+- Node.js 22 or newer.
+- Windows, macOS, or Linux.
+- An internet connection.
+
+### Run instantly with npx
+
+```sh
+npx shinobu-cinematix
+```
+
+### Install globally
+
+```sh
+npm install -g shinobu-cinematix
+```
+
+Then launch:
+
+```sh
+shinobu-cinematix
+```
+
+## Getting started
+
+Once launched, SHINOBU CINEMATIX opens its interactive search interface.
+
+Enter a search query and press Enter.
+
+You can also:
+
+- Paste a magnet link.
+- Paste a bare infohash.
+- Open a `.torrent` file.
+- Browse the available library.
+
+Use the arrow keys to navigate results.
+
+Press `d` to download the selected result. Use Space to mark multiple results before downloading them together.
+
+Press `?` to view the available keyboard shortcuts.
 
 ## Finding something
 
-Type what you're looking for and press Enter. Results stream in from every source as they answer, tagged with size and how many people are sharing each one, so you can see what'll come down fast. Arrow to a result and press `d` to save it, or press space on several rows and then `d` to download them together. `shift+d` picks a folder for the current result or marked batch.
+Search results stream in as sources respond. Results include information such as file size and available seeders.
+
+Select a result and press `d` to download it.
+
+Use `Shift+D` to choose a destination folder for a result or selected batch without changing your default download location.
 
 <p align="center">
-  <img src="https://git.bairon.dev/baairon/torlink/raw/branch/main/preview/browse.svg?v=1.10.0" alt="torlink's browse view with two results marked for a batch download" style="max-width: 832px; width: 100%; height: auto;">
+  <img src="preview/browse.svg" alt="SHINOBU CINEMATIX browse interface" width="832">
 </p>
 
 ## Your downloads
 
-Active downloads sit up top with their progress, speed, and time left; when one finishes it drops into Recently downloaded just below, so the list stays tidy. Everything's still there when you come back, and anything interrupted picks up where it left off.
+The Downloads pane displays active transfers with:
 
-Downloads run in the background while you keep searching, so you can queue up as many as you want. They save to your downloads folder, and the Downloads pane keeps tabs on each one; press `o` anytime to change where that is, or use `shift+d` to send a result or marked batch somewhere else without changing the default. When something finishes it keeps seeding automatically so the next person can find it too, and the Seeding tab lets you pause or stop that anytime.
+- Download progress.
+- Transfer speed.
+- Estimated remaining time.
+- Peer information.
+
+Completed downloads appear in your history.
+
+New downloads are organized into individual movie folders, keeping related files together.
+
+Press `o` to change the default download directory.
+
+Completed downloads can automatically seed so other peers can retrieve them.
 
 <p align="center">
-  <img src="https://git.bairon.dev/baairon/torlink/raw/branch/main/preview/downloads.svg?v=1.10.0" alt="torlink's Downloads pane: live progress on top, recently downloaded below" style="max-width: 832px; width: 100%; height: auto;">
+  <img src="preview/downloads.svg" alt="SHINOBU CINEMATIX downloads interface" width="832">
 </p>
 
-When a download comes with several videos or tracks, torlink drops a `playlist.m3u` into each folder holding more than one, so a course split into modules plays straight through in order. Run `torlnk --no-playlist` if you'd rather it didn't.
+## Playlist generation
+
+When a download contains multiple media files, SHINOBU CINEMATIX can generate a `playlist.m3u` file for folders containing multiple supported files.
+
+To disable playlist generation:
+
+```sh
+shinobu-cinematix --no-playlist
+```
 
 ## What it searches
 
-A short, hand-picked list of trusted sources:
+SHINOBU CINEMATIX uses a selection of torrent sources. Source availability may change over time.
 
-| Category | Sources |
-| --- | --- |
-| Games | FitGirl |
-| Movies | YTS, The Pirate Bay, BitTorrented |
-| TV | EZTV, The Pirate Bay, BitTorrented |
-| Anime | Nyaa, SubsPlease |
+## Headless operation
 
-Games are the only category that can run code, so they come from FitGirl alone, a repacker with a long, trusted track record; everything else is plain video and subtitles. If a source is down, the search carries on without it, and torlink tells you which one is offline.
+SHINOBU CINEMATIX can also run without its interactive terminal interface.
 
-## Headless
+```sh
+shinobu-cinematix search "<query>" --category movies
+shinobu-cinematix seed <path>
+shinobu-cinematix watch <dir>
+shinobu-cinematix serve
+shinobu-cinematix files
+shinobu-cinematix attach
+```
 
-torlink also runs without the TUI, for servers and seedboxes:
+Use:
 
-    torlnk search "<query>" [--category games|movies|tv|anime]
-                            print one JSON document of merged search results
-    torlnk seed <path>    share files you already have
-    torlnk watch <dir>    download anything dropped into a folder
-    torlnk serve          take magnets over HTTP
-    torlnk files          stream finished downloads over HTTP
-    torlnk attach         keep the TUI alive across ssh sessions
+```sh
+shinobu-cinematix --help
+```
 
-Add `--daemon` to keep seed, watch, serve, or files running after you log out; `torlnk --help` has the full list of modes and flags.
+for the complete command and option reference.
 
-### Sharing something of your own
+## Sharing something of your own
 
-Everything else starts with a torrent someone else made. `seed` goes the other way:
+You can create a torrent from your own files and share it with others:
 
-    torlnk seed ./album
+```sh
+shinobu-cinematix seed ./my-folder
+```
 
-It turns the folder into a torrent, saves `album.torrent` next to it, prints the magnet, and starts sharing right away. Send anyone the magnet and they pull the files from you.
+The application creates torrent metadata, prints the magnet link, and begins seeding.
 
-### Driving it over HTTP
+## Network interface binding
 
-`serve` takes a magnet or a `.torrent` you already have:
+You can bind torrent traffic to a specific network interface:
 
-    POST /add {"magnet":"magnet:?xt=..."}
-    POST /add {"torrent":"<base64>"}
+```sh
+shinobu-cinematix serve --interface wg0 --peer-port 51413
+```
 
-Either can carry a `seedTime` for that one torrent, in the same grammar as `--seed-time` (`"30d"`, `"2h"`; `0` means never stop). It wins over the daemon-wide flag, so a box that normally drops seeds after a couple of hours can keep one release alive for a month. Change it later, or on something already downloading, through the control endpoint; `GET /downloads` reports the limit and when it falls due (`seedUntil`):
+The existing `TORLINK_INTERFACE`, `TORLINK_PEER_PORT`, and `TORLINK_DHT_PORT` environment variable names remain supported for compatibility.
 
-    POST /control {"id":"<info hash>","action":"seed-time","seedTime":"30d"}
+## Development
 
-### Binding to a VPN or interface
+Clone the repository:
 
-If torrents should only ever leave through one interface, name it:
+```sh
+git clone https://github.com/akhilamalakota/shinobu-cinematix.git
+cd shinobu-cinematix
+```
 
-    torlnk serve --interface wg0 --peer-port 51413
+Install dependencies:
 
-Every peer, tracker, DHT and search socket is bound to that interface's IPv4 address, and the fixed peer port is the one to forward. If the interface drops, downloads and seeds pause instead of taking another route, and pick up on their own when it is back. The same flags work on `watch`, `seed` and the TUI, or as `TORLINK_INTERFACE`, `TORLINK_PEER_PORT` and `TORLINK_DHT_PORT`, with nothing new on screen. `serve` reports the state on `GET /network` and takes changes on `POST /network` without a restart. torlink knows nothing about any particular VPN, only the interface; `torlnk --help` has the details and limits.
+```sh
+npm install
+```
+
+Run the development version:
+
+```sh
+npm run dev
+```
+
+Build the application:
+
+```sh
+npm run build
+```
+
+Run the bundled application:
+
+```sh
+npm start
+```
+
+Run TypeScript checks:
+
+```sh
+npm run typecheck
+```
+
+Run tests:
+
+```sh
+npm test -- --maxWorkers=1
+```
 
 ## Contributing
 
-To run or work on torlink locally:
+Contributions, bug reports, and suggestions are welcome.
 
-1. Clone the repository and open the folder.
-2. Install dependencies:
-   ```sh
-   npm install
-   ```
-3. Run the development version:
-   ```sh
-   npm run dev
-   ```
-   Or build it and run the bundled version:
-   ```sh
-   npm run build
-   npx torlnk
-   ```
-
-Before opening a PR, skim [CONTRIBUTING.md](CONTRIBUTING.md); it lays out the bar with examples from real merged PRs.
+Before opening a pull request, review the project's contribution guidelines if available.
 
 ## Privacy
 
-Your files stay on your disk, and nothing routes through a central server; torlink only talks to the torrent network directly. Once a download finishes it keeps seeding by default, sharing it back so the next person can find it just as easily. The network only works because people pass things along, and even a few minutes makes a real difference. If you'd rather not, opt out anytime: open the Seeding tab, press `p` to pause or stop any item, and press it again to pick it back up. Always your call.
+Your downloaded files are stored locally on your device.
+
+SHINOBU CINEMATIX communicates with torrent sources and the peer-to-peer network to perform its discovery, downloading, and seeding functionality.
+
+Completed downloads can continue seeding by default. You remain in control: use the Seeding tab to pause or stop individual transfers.
+
+Always use torrent networks responsibly and respect applicable copyright laws.
+
+---
+
+<p align="center">
+  <strong>THE SHINOBU UNIVERSE</strong>
+  <br>
+  <strong>SHINOBU CINEMATIX</strong>
+  <br><br>
+  <strong>A PRODUCT CREATED BY</strong>
+  <br>
+  <h2>AKHIL AMALAKOTA</h2>
+  <br>
+  <a href="https://github.com/akhilamalakota/shinobu-cinematix">GitHub</a>
+  ·
+  <a href="https://shinobu.in">Website</a>
+  ·
+  <a href="https://github.com/akhilamalakota/shinobu-cinematix/issues">Issues</a>
+  <br><br>
+  MIT License
+  <br><br>
+  <em>Like a shadow. Vanish.</em>
+</p>

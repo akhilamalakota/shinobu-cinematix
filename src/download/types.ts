@@ -1,8 +1,6 @@
+
 import type { SourceId } from "../sources/types";
 
-// "queued" = waiting for a free download slot (see TORLINK_MAX_DOWNLOADS). Unlike
-// "paused" (an explicit user action) a queued item is started automatically as
-// soon as a slot frees.
 export type DownloadStatus = "downloading" | "queued" | "paused" | "completed" | "failed";
 
 export type SeedStatus = "seeding" | "paused" | "missing";
@@ -26,6 +24,7 @@ export interface QueueItem {
   source?: SourceId;
   magnet: string;
   dir: string;
+  storageLayout?: "movie-folder";
   status: DownloadStatus;
   progress: number;
   totalBytes: number;
@@ -36,6 +35,5 @@ export interface QueueItem {
   files?: number;
   error?: string;
   addedAt: number;
-  // Carried from add() into the history entry on completion (see HistoryItem).
   seedTimeMs?: number;
 }

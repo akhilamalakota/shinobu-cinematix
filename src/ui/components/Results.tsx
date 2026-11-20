@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Box, Text, useInput } from "ink";
 import { useStore, CATEGORIES } from "../store";
@@ -17,8 +18,6 @@ import type { Source, TorrentResult } from "../../sources/types";
 
 type Mode = "list" | "search" | "detail" | "filter";
 
-// Own column for the batch-select tick, so it never shifts when the pointer
-// shares the row; the second cell is the gap before the row number.
 const MARK_W = 2;
 
 const PLACEHOLDER = "Search, paste a magnet, or drop a .torrent…";
@@ -97,19 +96,13 @@ function Detail({ r, width }: { r: TorrentResult; width: number }) {
         />
       </Box>
       <Box marginTop={1}>
-        <Text color={COLOR.accent} bold>
-          d
-        </Text>
+        <Text color={COLOR.accent} bold>d</Text>
         <Text color={COLOR.text}> Download</Text>
         <Text dimColor>{`  ${ICON.dot}  `}</Text>
-        <Text color={COLOR.accent} bold>
-          y
-        </Text>
+        <Text color={COLOR.accent} bold>y</Text>
         <Text color={COLOR.text}> Copy</Text>
         <Text dimColor>{`  ${ICON.dot}  `}</Text>
-        <Text color={COLOR.accent} bold>
-          e
-        </Text>
+        <Text color={COLOR.accent} bold>e</Text>
         <Text color={COLOR.text}> Export</Text>
         <Text dimColor>{`  ${ICON.dot}  `}</Text>
         <Text color={COLOR.alt}>esc</Text>
@@ -152,12 +145,8 @@ export function Results() {
   const focused = region === "content";
   const [mode, setMode] = useState<Mode>("list");
   const [cursor, setCursor] = useState(0);
-  // The row the user navigated to, by infohash; null until they move. Keeps
-  // the cursor on their row while streamed-in sources reshuffle the list.
   const selRef = useRef<string | null>(null);
   const [detail, setDetail] = useState<TorrentResult | null>(null);
-  // Rows marked with space for a batch download, by infohash so the marks
-  // survive re-sorting and streamed-in results.
   const [marked, setMarked] = useState<ReadonlySet<string>>(new Set());
 
   useEffect(() => {
@@ -266,8 +255,6 @@ export function Results() {
         const r = results[clamped];
         if (r) toggleMark(r.infoHash);
       } else if (input === "d" || input === "D") {
-        // Only marks still in view count: a filter can hide a marked row, and
-        // downloading something the user can't see would be a surprise.
         const batch = results.filter((r) => marked.has(r.infoHash));
         const r = results[clamped];
         const targets = batch.length > 0 ? batch : r ? [r] : [];
@@ -277,8 +264,6 @@ export function Results() {
           targets.forEach(openDownload);
           clearMarks();
         } else {
-          // Keep the selection while the folder prompt is open: cancelling it
-          // should not cost the user their marks.
           openDownloadTo(targets, clearMarks);
         }
       } else if (input === "y") {
@@ -326,8 +311,6 @@ export function Results() {
     : SOURCES;
   const tabErrored =
     tabSources.length > 0 && tabSources.every((s) => search.perSource[s.id]?.error);
-  // Only the active tab's sources hold its spinner; other groups' stragglers
-  // stream in silently.
   const pending = tabSources.some((s) => search.perSource[s.id]?.loading);
   const showStats = useMemo(
     () => results.some((r) => r.sizeBytes > 0 || r.seeders > 0),
@@ -350,8 +333,6 @@ export function Results() {
 
   const status = () => {
     if (pending) {
-      // Rows are already usable: the settled header simply carries a spinner
-      // until the tab's last source lands.
       if (results.length > 0)
         return (
           <Text>
@@ -490,8 +471,7 @@ export function Results() {
                       <Box flexGrow={1} minWidth={0} marginLeft={1}>
                         <Text
                           wrap="truncate-end"
-                          color={here ? COLOR.accent : undefined}
-                          dimColor={!here}
+                          color={here ? COLOR.accent : COLOR.text}
                           bold={here}
                         >
                           {cleanText(r.name)}
@@ -553,9 +533,6 @@ export function Results() {
                 defaultValue={textFilter}
                 width={Math.max(1, contentWidth - 10)}
                 onChange={setTextFilter}
-                // Commit from the submit value / functional form, not the
-                // render closure: a same-tick burst (ctrl+u then enter) would
-                // otherwise resurrect the pre-clear text.
                 onSubmit={(value) => { setTextFilter(value.trim()); setMode("list"); }}
                 onExitDown={() => { setTextFilter((cur) => cur.trim()); setMode("list"); }}
                 onExitLeft={() => { setTextFilter((cur) => cur.trim()); setMode("list"); }}

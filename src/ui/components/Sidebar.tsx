@@ -1,3 +1,4 @@
+
 import { Box, Text, useInput } from "ink";
 import { useStore, useQueueItems, CATEGORIES, type Section } from "../store";
 import { wrapStep } from "../move";
@@ -12,69 +13,115 @@ const FILTERS: NavItem[] = CATEGORIES.map((c) => ({
   key: c.key as Section,
   label: c.label,
 }));
+
 const LIBRARY: NavItem[] = [
   { key: "downloads", label: "Downloads" },
   { key: "seeding", label: "Seeding" },
 ];
 
-const BADGED = (key: Section): boolean => key === "downloads" || key === "seeding";
+const GROUPS: { label: string; items: NavItem[] }[] = [
+  { label: "DISCOVER", items: FILTERS },
+  { label: "LIBRARY", items: LIBRARY },
+];
 
-const GROUPS: NavItem[][] = [FILTERS, LIBRARY];
+const NAV: NavItem[] = GROUPS.flatMap((g) => g.items);
 
-const NAV: NavItem[] = GROUPS.flat();
+const BADGED = (key: Section): boolean =>
+  key === "downloads" || key === "seeding";
 
 const BADGE_W = " (00)".length;
 
 export const RAIL_WIDTH =
-  GUTTER + Math.max(...NAV.map((n) => n.label.length + (BADGED(n.key) ? BADGE_W : 0)));
+  GUTTER +
+  Math.max(
+    ...NAV.map((n) => n.label.length + (BADGED(n.key) ? BADGE_W : 0)),
+    ...GROUPS.map((g) => g.label.length),
+  );
 
 export function Sidebar() {
   const { section, setSection, region, setRegion, queue } = useStore();
   const focused = region === "sidebar";
   const idx = Math.max(0, NAV.findIndex((n) => n.key === section));
+
   useQueueItems(queue);
+
   const active = queue.activeCount;
   const seeding = queue.seedingCount;
 
   useInput(
     (input, key) => {
-      if (key.upArrow || input === "k") setSection(NAV[wrapStep(idx, -1, NAV.length)]!.key);
-      else if (key.downArrow || input === "j") setSection(NAV[wrapStep(idx, 1, NAV.length)]!.key);
-      else if (key.return) setRegion("content");
+      if (key.upArrow || input === "k") {
+        setSection(NAV[wrapStep(idx, -1, NAV.length)]!.key);
+      } else if (key.downArrow || input === "j") {
+        setSection(NAV[wrapStep(idx, 1, NAV.length)]!.key);
+      } else if (key.return) {
+        setRegion("content");
+      }
     },
     { isActive: focused },
   );
 
   return (
     <Box flexDirection="column" width={RAIL_WIDTH} marginRight={1}>
-      {GROUPS.map((items, gi) => (
-        <Box key={gi} flexDirection="column" marginTop={gi > 0 ? 1 : 0}>
-          {items.map((item) => {
+      {GROUPS.map((group, gi) => (
+        <Box
+          key={group.label}
+          flexDirection="column"
+          marginTop={gi > 0 ? 2 : 0}
+        >
+          <Box marginBottom={1}>
+            <Box width={GUTTER} flexShrink={0} />
+            <Text color={COLOR.accent} dimColor={!focused} bold>
+              {group.label}
+            </Text>
+          </Box>
+
+          {group.items.map((item) => {
             const selected = item.key === section;
+            const count =
+              item.key === "downloads"
+                ? active
+                : item.key === "seeding"
+                  ? seeding
+                  : 0;
+
             return (
               <Box key={item.key}>
                 <Box width={GUTTER} flexShrink={0}>
                   {selected ? (
-                    <Text color={focused ? ACCENT_RAMP[1] : RULE} bold={focused}>
+                    <Text
+                      color={focused ? ACCENT_RAMP[1] : RULE}
+                      bold={focused}
+                    >
                       {ICON.bar}
                     </Text>
                   ) : null}
                 </Box>
+
                 <Text
-                  color={selected ? (focused ? COLOR.accent : COLOR.alt) : undefined}
+                  color={
+                    selected
+                      ? focused
+                        ? COLOR.bright
+                        : COLOR.alt
+                      : COLOR.text
+                  }
                   dimColor={!selected}
-                  bold={selected && focused}
+                  bold={selected}
                 >
                   {item.label}
                 </Text>
-                {(() => {
-                  const n = item.key === "downloads" ? active : item.key === "seeding" ? seeding : 0;
-                  return n > 0 ? (
-                    <Box flexShrink={0}>
-                      <Text dimColor>{` (${n})`}</Text>
-                    </Box>
-                  ) : null;
-                })()}
+
+                {count > 0 ? (
+                  <Box flexShrink={0}>
+                    <Text
+                      color={selected ? COLOR.accent : COLOR.alt}
+                      dimColor={!selected}
+                    >
+                      {` (${count})`}
+                    </Text>
+                  </Box>
+                ) : null}
               </Box>
             );
           })}

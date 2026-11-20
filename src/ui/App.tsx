@@ -1,3 +1,4 @@
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Box, Text, useApp, useInput, useStdout, useStdin } from "ink";
 import { promises as fs } from "node:fs";
@@ -52,8 +53,6 @@ import { useMouseWheel } from "./hooks/useMouseWheel";
 import { VERSION } from "../version";
 import { fetchLatestVersion, isNewer } from "../update/version";
 
-// The "download to" prompt's subject line: the name for one torrent, a count
-// (and total size when known) for a marked batch.
 function downloadSubject(inputs: DownloadInput[]): string {
   if (inputs.length === 1) {
     const only = inputs[0]!;
@@ -122,9 +121,6 @@ export function App({
   const [showHelp, setShowHelp] = useState(false);
   const [editingFolder, setEditingFolder] = useState(false);
   const [editingTrackers, setEditingTrackers] = useState(false);
-  // Results waiting on the "download to" prompt (D); null when the prompt is
-  // closed. lastDownloadToDir pre-fills the next prompt so queueing a batch
-  // into the same alternate folder only costs one typed path per session.
   const [pendingDownload, setPendingDownload] = useState<DownloadInput[] | null>(null);
   const onQueuedRef = useRef<(() => void) | undefined>(undefined);
   const [lastDownloadToDir, setLastDownloadToDir] = useState<string | null>(null);
@@ -141,16 +137,8 @@ export function App({
       const cfg = await loadConfig();
       const q = new DownloadQueue({ playlist });
       q.setTrackers(cfg.trackers);
-      // Crash-boot breaker: a marker left behind by the previous boot means it
-      // died mid-restore, so this one restores everything paused with the
-      // engine cold (safe mode) instead of walking into the same explosion.
       const safeBoot = wasBootInterrupted();
       armBootMarker();
-      // One fail-safe around the whole restore, holding a single invariant: the
-      // app always reaches a usable screen. Nothing below throws today (every
-      // loader falls back to empty state and the engine calls are guarded), but
-      // a future one that did would otherwise strand the boot on the loading
-      // spinner, which is the worst failure this app has.
       try {
         q.restore(reconcileQueue(await loadQueue()), { safe: safeBoot });
         q.restoreHistory(await loadHistory());
@@ -190,8 +178,6 @@ export function App({
     };
   }, [initialMagnet, initialTorrent, playlist]);
 
-  // Best-effort, once per launch, off the hot path: if a newer release exists,
-  // surface a quiet banner. Any failure (offline, opt-out) just leaves it hidden.
   useEffect(() => {
     if (process.env.TORLINK_NO_UPDATE_CHECK) return;
     let alive = true;
@@ -222,8 +208,6 @@ export function App({
   );
 
   const quitAll = useCallback(() => {
-    // Flush all state synchronously up front so nothing is lost to the hard
-    // exit; the unmount effect still runs suspend() for the engine teardown.
     queue?.persistSync();
     if (onQuit) onQuit();
     else exit();
@@ -319,9 +303,6 @@ export function App({
       setPendingDownload(null);
       const dir = normalizeDownloadDir(raw);
       if (!queue || !inputs || !dir) return;
-      // add() ignores the dir for anything already active, so don't claim a
-      // folder that won't be used. Failed items fall through: a re-add with a
-      // fresh dir is exactly how a bad-disk download gets redirected.
       const queued = queue.getItems();
       const fresh = inputs.filter((input) => {
         const existing = queued.find((it) => it.id === input.id);
@@ -411,9 +392,6 @@ export function App({
     [queue, config],
   );
 
-  // A .torrent dragged onto the terminal lands in the search field as a path.
-  // Read it, hand the queue the magnet built from its metadata, and say so when
-  // it can't be read rather than quietly searching for the path text.
   const startFromTorrentFile = useCallback(
     (file: string) => {
       setNotice(`Reading torrent file: ${truncate(file, 48)}`);
@@ -471,8 +449,6 @@ export function App({
       setView("browser");
       return;
     }
-    // Copying a file in a file manager puts its path on the clipboard, so paste
-    // takes one too — same handling as a drag onto the search field.
     const file = resolveTorrentPath(text);
     if (file) {
       startFromTorrentFile(file);
@@ -481,9 +457,6 @@ export function App({
     setNotice("No magnet link on the clipboard.");
   }, [startDownload, startFromTorrentFile]);
 
-  // A magnet or .torrent passed to a later `torlnk` launch lands here instead
-  // of opening a second window (cli/handoff.ts), and is queued the way the
-  // search field would queue it.
   useEffect(() => {
     if (!inbox || !queue || !config) return;
     return inbox.subscribe((msg) => {
@@ -595,7 +568,7 @@ export function App({
         quitAll();
         return;
       }
-      if (editingFolder || editingTrackers || pendingDownload) return; // the prompt owns input (its own esc + enter)
+      if (editingFolder || editingTrackers || pendingDownload) return;
       if (captureMode === "text") return;
       if (showHelp) {
         setShowHelp(false);
@@ -651,7 +624,7 @@ export function App({
   if (!store) {
     return (
       <Box height={rows} justifyContent="center" alignItems="center">
-        <Spinner label="Starting torlink" />
+        <Spinner label="Starting SHINOBU CINEMATIX" />
       </Box>
     );
   }
@@ -668,10 +641,8 @@ export function App({
   return (
     <StoreContext.Provider value={store}>
       <TabTitle />
-      <Box flexDirection="column" paddingX={1}>
+      <Box flexDirection="column" paddingX={1} paddingTop={1}>
         <Box justifyContent="space-between">
-          {/* The wordmark never shrinks: without these constraints a long notice
-              squeezes the logo box and wraps its own text through the art. */}
           <Box flexShrink={0}>
             <Logo />
           </Box>

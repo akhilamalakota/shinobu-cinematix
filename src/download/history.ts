@@ -1,3 +1,4 @@
+
 import { promises as fs, mkdirSync, writeFileSync, renameSync } from "node:fs";
 import path from "node:path";
 import { historyFile } from "../config/paths";
@@ -13,10 +14,8 @@ export interface HistoryItem {
   sizeBytes: number;
   magnet: string;
   dir: string;
+  storageLayout?: "movie-folder";
   completedAt: number;
-  // Per-torrent seed limit (ms after completedAt), set through the headless
-  // API. Overrides the daemon-wide --seed-time; 0 means never stop seeding
-  // this one. Absent = inherit whatever the daemon was started with.
   seedTimeMs?: number;
 }
 

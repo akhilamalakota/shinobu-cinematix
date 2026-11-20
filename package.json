@@ -1,10 +1,10 @@
 {
-  "name": "torlnk",
-  "version": "1.11.1",
-  "description": "A sleek, zero-setup torrent finder and downloader that lives right in your terminal.",
+  "name": "shinobu-cinematix",
+  "version": "1.0.0",
+  "description": "A cinematic, terminal-native torrent discovery and downloader experience.",
   "type": "module",
   "bin": {
-    "torlnk": "./dist/cli.cjs"
+    "shinobu-cinematix": "./dist/cli.cjs"
   },
   "files": [
     "dist",
@@ -27,6 +27,8 @@
     "prepublishOnly": "npm run build"
   },
   "keywords": [
+    "shinobu",
+    "shinobu-cinematix",
     "torrent",
     "torrent-client",
     "torrent-search",
@@ -39,20 +41,17 @@
     "tui",
     "terminal",
     "cli",
-    "ink",
-    "zero-configuration",
-    "zero-setup",
-    "fitgirl"
+    "ink"
   ],
-  "author": "bairon",
+  "author": "Akhil Amalakota",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/baairon/torlink.git"
+    "url": "git+https://github.com/akhilamalakota/shinobu-cinematix.git"
   },
-  "homepage": "https://torlink.bairon.dev",
+  "homepage": "https://shinobu.in",
   "bugs": {
-    "url": "https://github.com/baairon/torlink/issues"
+    "url": "https://github.com/akhilamalakota/shinobu-cinematix/issues"
   },
   "publishConfig": {
     "access": "public"
@@ -60,6 +59,7 @@
   "dependencies": {
     "create-torrent": "^6.1.2",
     "env-paths": "^4.0.0",
+    "fs-chunk-store": "^5.0.1",
     "ink": "^7.0.5",
     "parse-torrent": "^11.0.21",
     "react": "^19.2.7",

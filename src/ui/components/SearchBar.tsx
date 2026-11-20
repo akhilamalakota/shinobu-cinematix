@@ -1,3 +1,4 @@
+
 import { Box, Text } from "ink";
 import { TextField } from "./TextField";
 import { Panel } from "./Panel";
@@ -25,9 +26,11 @@ export function SearchBar({
   onExitLeft,
 }: SearchBarProps) {
   return (
-    <Panel title="search" width={width} focused={editing} height={2}>
-      <Box>
-        <Text color={COLOR.accent}>{`${ICON.pointer} `}</Text>
+    <Panel title="COMMAND" width={width} focused={editing} height={2}>
+      <Box alignItems="center">
+        <Text color={COLOR.accent} bold>
+          {editing ? "❯ " : `${ICON.pointer} `}
+        </Text>
         <Box flexGrow={1} minWidth={0}>
           {editing ? (
             <TextField
@@ -40,11 +43,16 @@ export function SearchBar({
               onExitLeft={onExitLeft}
             />
           ) : value ? (
-            <Text wrap="truncate-end">{value}</Text>
+            <Text color={COLOR.text} wrap="truncate-end">
+              {value}
+            </Text>
           ) : (
             <Text dimColor>{placeholder}</Text>
           )}
         </Box>
+        {editing ? (
+          <Text color={COLOR.accent} bold> LIVE</Text>
+        ) : null}
       </Box>
     </Panel>
   );

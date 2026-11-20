@@ -1,3 +1,4 @@
+
 import type { ReactNode } from "react";
 import { Box, Text } from "ink";
 import { COLOR, RULE } from "../theme";
@@ -16,13 +17,13 @@ export function Panel({ title, width, focused, count, height, children }: PanelP
   const w = Math.max(10, width);
   const cap = title.charAt(0).toUpperCase() + title.slice(1);
   const label = count ? `${cap} ${count}` : cap;
-  const fill = Math.max(0, w - 5 - label.length);
+  const fill = Math.max(0, w - label.length - 5);
 
   return (
     <Box flexDirection="column" width={w}>
       <Box>
         <Text color={color}>{"╭─ "}</Text>
-        <Text bold color={color}>
+        <Text bold color={focused ? COLOR.bright : color}>
           {label}
         </Text>
         <Text color={color}>{` ${"─".repeat(fill)}╮`}</Text>

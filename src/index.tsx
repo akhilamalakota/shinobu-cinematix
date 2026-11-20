@@ -1,3 +1,4 @@
+
 import path from "node:path";
 import { render } from "ink";
 import { parseCliArgs, HELP_TEXT } from "./cli/args";
@@ -77,7 +78,7 @@ function failHeadless(err: unknown): never {
 if (cmd.kind === "update") {
   void import("./update/run").then(({ runUpdate }) => runUpdate({ force: cmd.force }).catch(failHeadless));
 } else if (cmd.kind === "watch") {
-  if (cmd.daemon) daemonize("watch"); // parent exits here; the detached child continues
+  if (cmd.daemon) daemonize("watch");
   const { dir, downloadDir, seedTimeMs, deleteFiles, playlist } = cmd;
   void import("./daemon/watch")
     .then(({ runWatch }) => runWatch(dir, downloadDir, { seedTimeMs, deleteFiles, playlist }))
@@ -140,82 +141,75 @@ if (cmd.kind === "update") {
     })
     .catch(failHeadless);
 } else {
+  // A magnet or .torrent given while torlink is already open goes to that
+  // window (#216); only a launch nobody took becomes a TUI of its own. The
+  // path is made absolute here because the other window has its own cwd.
+  const launch: Handoff | undefined = cmd.initialMagnet
+    ? { magnet: cmd.initialMagnet }
+    : cmd.initialTorrent
+      ? { torrent: path.resolve(resolveTorrentPath(cmd.initialTorrent) ?? cmd.initialTorrent) }
+      : undefined;
+  const inbox = await claim(launch);
+  if (inbox === "sent") {
+    console.log("Sent to the running torlink.");
+    process.exit(0);
+  }
 
-// A magnet or .torrent given while torlink is already open goes to that
-// window (#216); only a launch nobody took becomes a TUI of its own. The
-// path is made absolute here because the other window has its own cwd.
-const launch: Handoff | undefined = cmd.initialMagnet
-  ? { magnet: cmd.initialMagnet }
-  : cmd.initialTorrent
-    ? { torrent: path.resolve(resolveTorrentPath(cmd.initialTorrent) ?? cmd.initialTorrent) }
-    : undefined;
-const inbox = await claim(launch);
-if (inbox === "sent") {
-  console.log("Sent to the running torlink.");
-  process.exit(0);
-}
+  // Enter the alt-screen and hide the hardware cursor: the TUI draws its own
+  // cursor (the search field block, list pointers), so the terminal's should
+  // stay hidden. restoreTerminal shows it again on exit.
+  process.stdout.write("\x1b[?1049h\x1b[?25l\x1b[22;0t\x1b]0;SHINOBU CINEMATIX\x07");
+  if (process.platform === "win32") process.title = "SHINOBU CINEMATIX";
 
-// Enter the alt-screen and hide the hardware cursor: the TUI draws its own
-// cursor (the search field block, list pointers), so the terminal's should
-// stay hidden. restoreTerminal shows it again on exit.
-process.stdout.write("\x1b[?1049h\x1b[?25l\x1b[22;0t\x1b]0;torlink\x07");
-if (process.platform === "win32") process.title = "torlink";
+  let restored = false;
+  function restoreTerminal(): void {
+    if (restored) return;
+    restored = true;
+    process.stdout.write("\x1b[?1000l\x1b[?1006l\x1b[?25h\x1b[23;0t\x1b[?1049l");
+  }
 
-let restored = false;
-function restoreTerminal(): void {
-  if (restored) return;
-  restored = true;
-  process.stdout.write("\x1b[?1000l\x1b[?1006l\x1b[?25h\x1b[23;0t\x1b[?1049l");
-}
-
-let exiting = false;
-function forceExit(code = 0): void {
-  // Re-entry (e.g. ctrl-c after q): never get stuck, just leave now.
-  if (exiting) {
+  let exiting = false;
+  function forceExit(code = 0): void {
+    if (exiting) {
+      restoreTerminal();
+      process.exit(code);
+    }
+    exiting = true;
+    try {
+      app?.unmount();
+    } catch {}
     restoreTerminal();
     process.exit(code);
   }
-  exiting = true;
-  // Exit synchronously and unconditionally. State is already flushed
-  // (quitAll -> persistSync, and the unmount effect runs suspend()), so we never
-  // wait on webtorrent releasing its sockets; the OS reclaims them. Unmount
-  // first to restore raw mode, then our own terminal sequences, then go.
-  try {
-    app?.unmount();
-  } catch {}
-  restoreTerminal();
-  process.exit(code);
-}
 
-const app = render(
-  <App
-    initialMagnet={cmd.initialMagnet}
-    initialTorrent={cmd.initialTorrent}
-    inbox={inbox}
-    playlist={cmd.playlist}
-    onQuit={() => forceExit(0)}
-  />,
-  { exitOnCtrlC: false },
-);
+  const app = render(
+    <App
+      initialMagnet={cmd.initialMagnet}
+      initialTorrent={cmd.initialTorrent}
+      inbox={inbox}
+      playlist={cmd.playlist}
+      onQuit={() => forceExit(0)}
+    />,
+    { exitOnCtrlC: false },
+  );
 
-app
-  .waitUntilExit()
-  .then(() => forceExit(0))
-  .catch((err) => {
+  app
+    .waitUntilExit()
+    .then(() => forceExit(0))
+    .catch((err) => {
+      restoreTerminal();
+      console.error(err);
+      process.exit(1);
+    });
+
+  process.on("SIGINT", () => forceExit(0));
+  process.on("SIGTERM", () => forceExit(0));
+  process.on("exit", restoreTerminal);
+
+  process.on("uncaughtException", (err) => {
+    logCrash("uncaughtException", err);
     restoreTerminal();
     console.error(err);
     process.exit(1);
   });
-
-process.on("SIGINT", () => forceExit(0));
-process.on("SIGTERM", () => forceExit(0));
-process.on("exit", restoreTerminal);
-
-process.on("uncaughtException", (err) => {
-  logCrash("uncaughtException", err);
-  restoreTerminal();
-  console.error(err);
-  process.exit(1);
-});
-
 }

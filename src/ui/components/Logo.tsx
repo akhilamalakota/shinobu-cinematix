@@ -1,49 +1,19 @@
 
 import { Box, Text } from "ink";
-import { LOGO_LINES } from "../logo";
-import { COLOR, lerpHex } from "../theme";
-
-const HIGHLIGHT = "#FFFFFF";
-const TOP = "#FF667F";
-const BASE = COLOR.accent;
-const SHADE = "#69091F";
-
-function getSheen(t: number): string {
-  if (t < 0.12) return lerpHex(HIGHLIGHT, TOP, t / 0.12);
-  if (t < 0.4) return lerpHex(TOP, COLOR.bright, (t - 0.12) / 0.28);
-  if (t < 0.72) return lerpHex(COLOR.bright, BASE, (t - 0.4) / 0.32);
-  return lerpHex(BASE, SHADE, (t - 0.72) / 0.28);
-}
+import { COLOR } from "../theme";
 
 export function Logo() {
-  const rows = LOGO_LINES.length;
-
   return (
     <Box flexDirection="column">
-      {LOGO_LINES.map((line, row) => {
-        const textRow = Math.max(0, row - 1);
-        const textRows = Math.max(1, rows - 1);
-        const tY = textRow / (textRows - 1 || 1);
-        const chars = [...line];
-        const last = Math.max(1, chars.length - 1);
-
-        return (
-          <Box key={row}>
-            {chars.map((ch, i) => {
-              if (ch === " ") return <Text key={i}> </Text>;
-
-              const tX = i / last;
-              const factor = (tX + tY) / 2;
-
-              return (
-                <Text key={i} bold color={getSheen(factor)}>
-                  {ch}
-                </Text>
-              );
-            })}
-          </Box>
-        );
-      })}
+      <Box alignItems="center">
+        <Text color={COLOR.bright} bold>影 </Text>
+        <Text color={COLOR.text} bold>SHINOBU</Text>
+      </Box>
+      <Box marginLeft={3}>
+        <Text color={COLOR.accent} bold>
+          C I N E M A T I X
+        </Text>
+      </Box>
     </Box>
   );
 }

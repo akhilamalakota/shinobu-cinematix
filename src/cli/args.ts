@@ -1,3 +1,4 @@
+
 import { isIPv6 } from "node:net";
 import { isInfoHash } from "../sources/magnet";
 import { parseDuration } from "../util/duration";
@@ -57,8 +58,6 @@ export type CliCommand =
     }
   | { kind: "invalid"; arg: string };
 
-// Valueless boolean flags for the headless subcommands (everything else is a
-// `--flag value` pair).
 const BOOL_FLAGS = new Set(["delete-files", "daemon"]);
 
 function splitBooleans(args: string[]): { bools: Set<string>; rest: string[] } {
@@ -71,8 +70,6 @@ function splitBooleans(args: string[]): { bools: Set<string>; rest: string[] } {
   return { bools, rest };
 }
 
-// Minimal `--flag value` reader for the headless subcommands. Unknown tokens are
-// left in `rest` so the caller can decide what to do with them.
 function readFlags(args: string[]): { flags: Record<string, string>; rest: string[] } {
   const flags: Record<string, string> = {};
   const rest: string[] = [];
@@ -114,9 +111,6 @@ function withPlaylist(argv: string[]): CliCommand {
   return { kind: "invalid", arg: "--no-playlist (use with the TUI, watch, or serve)" };
 }
 
-// Global `--flag value` pairs, taken out before the command is read so the
-// per-command readers never see them. Strict on purpose, unlike parsePort: a
-// kill-switch flag that was silently dropped would run unbound.
 const NETWORK_FLAGS: Record<string, keyof NetworkOptions> = {
   "--interface": "interface",
   "--peer-port": "peerPort",
@@ -197,9 +191,6 @@ function parseCommand(argv: string[]): CliCommand {
     const query = rest.join(" ").trim();
     if (!query) return { kind: "invalid", arg: "search (missing query)" };
 
-    // Unlike --seed-time, 0 is refused rather than read as "no limit": a
-    // caller passing down what is left of its own budget should get an error
-    // when that reaches zero, not a search that never gives up.
     const timeoutMs = flags.timeout === undefined ? undefined : parseDuration(flags.timeout);
     if (timeoutMs === null || timeoutMs === 0) {
       return { kind: "invalid", arg: `search (invalid timeout '${flags.timeout}')` };
@@ -276,27 +267,27 @@ function parseCommand(argv: string[]): CliCommand {
   return { kind: "invalid", arg: a };
 }
 
-export const HELP_TEXT = `torlink, terminal-native torrent search
+export const HELP_TEXT = `SHINOBU CINEMATIX — cinematic, terminal-native torrent discovery
 
 usage
-  torlnk                      open the search TUI
-  torlnk "magnet:?xt=..."     start a download on launch
-  torlnk path/to/file.torrent open a .torrent file on launch
-  torlnk search <query>        headless: print search results as JSON
+  shinobu-cinematix                      open the search TUI
+  shinobu-cinematix "magnet:?xt=..."     start a download on launch
+  shinobu-cinematix path/to/file.torrent open a .torrent file on launch
+  shinobu-cinematix search <query>        headless: print search results as JSON
     [--category games|movies|tv|anime] [--timeout <dur>]
-  torlnk seed <path>          headless: share files you already have
-  torlnk watch <dir>          headless: download torrents dropped into <dir>
-  torlnk serve                headless: HTTP add API (POST /add) on :9161
-  torlnk files                headless: serve downloads over HTTP on :9160
-  torlnk attach               open/reattach the TUI in a persistent tmux session
-  torlnk update [--force]     update to the latest release and restart any daemon
+  shinobu-cinematix seed <path>          headless: share files you already have
+  shinobu-cinematix watch <dir>          headless: download torrents dropped into <dir>
+  shinobu-cinematix serve                headless: HTTP add API (POST /add) on :9161
+  shinobu-cinematix files                headless: serve downloads over HTTP on :9160
+  shinobu-cinematix attach               open/reattach the TUI in a persistent tmux session
+  shinobu-cinematix update [--force]     update to the latest release and restart any daemon
                               (--force rebuilds/restarts even if already current)
-  torlnk --version            print the version
+  shinobu-cinematix --version            print the version
 
 once open: type to search every source at once, enter to run, arrows to move,
 d to download, ? for keys
 tip: quote magnet links (they contain & characters)
-already open: a magnet or .torrent passed to torlnk is added to that window
+already open: a magnet or .torrent passed to shinobu-cinematix is added to that window
 instead of opening another
 
 playlists (TUI/watch/serve): finished downloads automatically get a
@@ -314,7 +305,7 @@ watch mode (no TUI): drop a .torrent, or a .magnet/.txt holding a magnet or
 info hash, into <dir> and it downloads then seeds. Add --to <dir> to choose
 where files land. Handled files move to <dir>/.processed (or /.failed).
 
-seed a path (no TUI): torlnk seed ./album turns the folder into a torrent,
+seed a path (no TUI): shinobu-cinematix seed ./album turns the folder into a torrent,
 saves album.torrent next to it, prints the magnet, and starts sharing. Send
 anyone the magnet and they pull the files from you. Takes --seed-time,
 --delete-files and --daemon.
@@ -341,20 +332,20 @@ network (TUI/watch/serve/seed; search takes --interface alone):
                          incoming peers (random otherwise)
   --dht-port <n>         fixed DHT UDP port (must differ from --peer-port)
 Env: TORLINK_INTERFACE, TORLINK_PEER_PORT, TORLINK_DHT_PORT (flags win; a
-daemon restarted by torlnk update keeps its flags, not its environment).
+daemon restarted by the update command keeps its flags, not its environment).
 IPv4 only; DNS lookups use the OS resolver, and the git/npm processes that
-torlnk update spawns are not bound. On Linux and macOS this sets the source
+the updater spawns are not bound. On Linux and macOS this sets the source
 address, so use a VPN that routes all traffic (a full tunnel, the usual
 default); Windows also pins the exit interface.
 serve adds GET /network (address, online, listen port, incoming peers) and
 POST /network {"interface":..,"peerPort":..,"dhtPort":..} to change them in
 place, no restart; null clears a field.
 
-torlnk attach: run the TUI inside a persistent tmux session. Detach with
-tmux's ctrl-b d, log out, then torlnk attach again to reattach where you
-left off. Downloads and seeds keep running while detached.
+shinobu-cinematix attach: run the TUI inside a persistent tmux session. Detach with
+tmux's ctrl-b d, log out, then shinobu-cinematix attach again to reattach where
+you left off. Downloads and seeds keep running while detached.
 
-serve mode (no TUI): a small HTTP API for handing torlink a magnet.
+serve mode (no TUI): a small HTTP API for handing SHINOBU CINEMATIX a magnet.
   POST /add {"magnet":"..."}   queue a magnet or info hash
        ... "seedTime":"30d"      optional: this torrent's own seed limit
                                 (0 = never stop); overrides --seed-time
