@@ -1,3 +1,4 @@
+
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -79,7 +80,7 @@ function makeStore(
 ): Store {
   const noop = (): void => {};
   return {
-    config: { downloadDir: "~/Downloads/torlink" } as Config,
+    config: { downloadDir: "~/Downloads/SHINOBU CINEMATIX" } as Config,
     setConfig: noop,
     queue: fakeQueue(items, history, seeds),
     view: "browser",
@@ -132,7 +133,7 @@ function save(
   }
   writeFileSync(
     join(OUT_DIR, `${name}.svg`),
-    ansiToSvg(frame, { cols: COLS, title: "torlink", ...extra }),
+    ansiToSvg(frame, { cols: COLS, title: "SHINOBU CINEMATIX", ...extra }),
   );
   console.log(`preview/${name}.svg`);
 }
@@ -140,6 +141,7 @@ function save(
 const CATEGORIES = sourcesByGroup()
   .map((g) => g.group.toLowerCase())
   .join(`  ${ICON.dot}  `);
+
 
 save(
   "splash",
@@ -165,6 +167,15 @@ save(
         <Text dimColor>{`  ${ICON.dot}  `}</Text>
         <Text color={COLOR.alt}>^c</Text>
         <Text dimColor> quit</Text>
+      </Text>
+    </Box>
+    <Box flexGrow={1} />
+    <Box width={COLS} justifyContent="center">
+      <Text>
+        <Text color="#FF3355" bold>SHINOBU UNIVERSE</Text>
+        <Text dimColor>{"  ·  "}</Text>
+        <Text color="#FFFFFF" bold>AKHIL AMALAKOTA</Text>
+        <Text dimColor>{"  ·  FOUNDER OF SHINOBU"}</Text>
       </Text>
     </Box>
   </Box>,
